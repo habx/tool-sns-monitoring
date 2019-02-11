@@ -1,32 +1,87 @@
 .App {
-  text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+.LeftColumn, .RightColumn {
+  padding: 32px;
+  overflow: auto;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.LeftColumn {
+  float: left;
+  height: 100vh;
+  padding: 32px;
+  border-right: 1px solid #ccc;
+  width: 270px;
+}
+
+.RightColumn {
+  margin-left: 335px;
+}
+
+.MonitoringState {
+  margin: 8px 16px;
+}
+
+.FixedTopBar {
+  padding: 24px;
+  background-color: white;
+  z-index: 10;
+  position: fixed;
+  /*padding: 32px;*/
+  left: 0;
+  top: 0;
+  right: 0;
+  border-bottom: 1px solid #ccc  
+}
+.FixedTopBar.not-fixed-and-invisible {
+  visibility: hidden;
+  display: block;
+  position: initial;
+}
+
+.MonitorBar-display {
+  padding-left: 14px;
+  overflow: auto;
+}
+
+.MonitorBar-display-left {
+  height: 56px;
+  float: left;
+  margin-right: 32px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+
 }
 
-.App-link {
-  color: #61dafb;
+.MonitorBar-icon {
+  margin-right: 8px;
+  vertical-align: middle;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.MonitorBar-action {
+  height: 56px;
+  margin-right: 8px !important;
+}
+
+.MonitorBar-input {
+  margin-right: 16px !important;
+}
+
+.TypicalPayload {
+  overflow: auto;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 6px 8px;
+}
+
+.TypicalPayload-actions {
+  float: right;
+  font-size: 14px;
+}
+
+.TypicalPayload-action-icon {
+  width: 14px;
+  height: 14px;
 }

@@ -1,0 +1,59 @@
+
+p {
+  margin: 0;
+}
+
+.Message-new-marker {
+  overflow: auto;
+}
+
+.Message-new-marker-inside {
+  border-radius: 12px;
+  padding: 4px 8px;
+  background-color: #25d366;
+  font-size: 12px;
+  float: left;
+}
+
+.Message {
+  padding: 8px;
+  border-radius: 4px;
+  margin: 12px 0;
+}
+
+.Message-date {
+  margin-bottom: 6px;
+}
+
+.Message-id {
+  margin-bottom: 6px;
+}
+
+.Message-metadata-json {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 8px 12px;
+}
+
+.Message-json {
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 8px 12px;
+}
+
+.Message-actions {
+  margin: 0 -4px 16px;
+
+}
+
+.Message-actions.compressed button.Message-action {
+  padding: 6px;
+}
+
+.Message-actions.compressed button.Message-action svg {
+  font-size: 20px;
+}
+
+button.Message-action {
+  margin: 0 4px;
+}

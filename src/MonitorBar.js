@@ -1,0 +1,91 @@
+
+import React, { PureComponent } from 'react'
+import cx from 'classnames'
+import EditIcon from '@material-ui/icons/Edit'
+import GraphicEqIcon from '@material-ui/icons/GraphicEq'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
+import InputAdornment from '@material-ui/core/InputAdornment'
+
+class MonitorBar extends PureComponent {
+  state = {
+    editing: !this.props.topicMonitored,
+    inputText: '',
+  }
+
+  onInputChange = (e) => this.setState({ inputText: e.target.value })
+  setTopicMonitored = () => {
+    this.props.onMonitoredTopicChange(this.state.inputText)
+  }
+
+  onMonitorButtonClick = () => {
+    this.setTopicMonitored()
+    this.setDisplay()
+  }
+
+  setEditing = () => {
+    this.setState({ editing: true, inputText: this.props.topicMonitored })
+  }
+  setDisplay = () => {
+    this.setState({ editing: false })
+  }
+
+  render() {
+    const { editing, inputText } = this.state
+    const { topicMonitored } = this.props
+
+    let inner
+
+    if (!editing) {
+      inner = (
+        <div className="MonitorBar-display">
+          <div className="MonitorBar-display-left">
+            <GraphicEqIcon className="MonitorBar-icon" />
+            {topicMonitored}
+          </div>
+          <Button key="edit-btn" className="MonitorBar-action" onClick={this.setEditing}>
+            <EditIcon style={{ marginRight: 8 }} />
+            Change
+          </Button>
+        </div>
+      )
+    } else {
+      inner = (
+        <div className="MonitorBar-edit">
+          <TextField
+            autoFocus
+            className="MonitorBar-input"
+            onChange={this.onInputChange}
+            value={inputText}
+            variant="outlined"
+            placeholder="Type the name of a topic"
+            InputProps={{
+              style: { width: 400 },
+              startAdornment: (
+                <InputAdornment position="start">
+                  <GraphicEqIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button key="monitor-btn" className="MonitorBar-action" variant="outlined" color="primary" onClick={this.onMonitorButtonClick} disabled={inputText === ''}>
+            Monitor {inputText}
+            <GraphicEqIcon />
+          </Button>
+          <Button key="cancel-btn" className="MonitorBar-action" variant="outlined" onClick={this.setDisplay}>
+            Cancel
+          </Button>
+        </div>
+      )
+    }
+
+
+    return (
+      <div className="MonitorBar">
+        {inner}
+      </div>
+    )
+  }
+}
+
+export default MonitorBar

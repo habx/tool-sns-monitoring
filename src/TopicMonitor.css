@@ -1,0 +1,17 @@
+
+.MonitoringState-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 20px;
+  background-color: #999;
+  display: inline-block;
+}
+
+.MonitoringState-dot.success {
+  background-color: #25d366;
+}
+
+.Messages {
+  margin: -12px 0;
+  overflow: auto;
+}
