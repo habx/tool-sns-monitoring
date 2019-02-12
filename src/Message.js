@@ -134,18 +134,20 @@ class Message extends PureComponent {
             </ButtonComponent>
           </div>
           <div
+            key="metadata"
             className="Message-metadata-json"
             ref={el => {
-              if (el) {
+              if (el && !el.innerHTML) {
                 el.appendChild(jsonMetadataView.render())
               }
             }}
           >
           </div>
           <div
+            key="json"
             className="Message-json"
             ref={el => {
-              if (el) {
+              if (el && !el.innerHTML) {
                 el.appendChild(jsonView.render())
               }
             }}

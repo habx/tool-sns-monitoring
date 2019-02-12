@@ -46,6 +46,11 @@ p {
 
 }
 
+.Message-staricon {
+  float: right;
+  font-size: 28px !important;
+}
+
 .Message-actions.compressed button.Message-action {
   padding: 6px;
 }

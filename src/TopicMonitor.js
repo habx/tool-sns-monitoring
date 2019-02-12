@@ -19,13 +19,14 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import cx from 'classnames'
+import getSamplePayloads from './drivers/getSamplePayloads'
 
 // import aws from 'aws-sdk'
 // import { Consumer } from 'aws-sqs-consumer'
 import 'jsoneditor/dist/jsoneditor.min.css'
-import 'whatwg-fetch'
 import './TopicMonitor.css'
 import Message from './Message'
+import SamplePayload from './SamplePayload'
 
 const accountId = '724009402066'
 const region = 'eu-west-1'
@@ -78,6 +79,7 @@ class TopicMonitor extends PureComponent {
     super(props)
 
     this.state = {
+      samplePayloads: null,
       editAndReplayMessage: null,
       historyMessages: unserializeMessagesForTopic(this.props.topic),
       currentMessages: [],
@@ -89,16 +91,19 @@ class TopicMonitor extends PureComponent {
 
   componentDidMount() {
     window.addEventListener('blur', this.onWindowBlur)
+    window.addEventListener('beforeunload', this.onWindowUnload)
+    this.fetchSamplePayloads()
     return (async () => {
-      this.props.onSubscribeStateChange('preparing')
+      this.changeSubscribeState('preparing')
       const QueueName = this.getQueueName()
       const { QueueUrl } = await awsEnv.sqs.createQueue({
         QueueName,
       }).promise()
+      this.createdQueueUrl = QueueUrl
 
       await ensureSQSAllowsSNS(awsEnv, QueueName, [this.props.topic], {createIfInexistant: true}) //
 
-      await awsEnv.sns.subscribe({
+      const res = await awsEnv.sns.subscribe({
         Protocol: 'sqs',
         TopicArn: awsEnv.getArn('sns', this.props.topic),
         Endpoint: awsEnv.getArn('sqs', QueueName),
@@ -107,13 +112,39 @@ class TopicMonitor extends PureComponent {
       this.poll()
       // consumer.createPool()
 
-      this.props.onSubscribeStateChange('subscribed')
+      this.changeSubscribeState('subscribed')
 
-    } )()
+    })().catch(err => {
+      // console.log(this.props.enqueueSnackbar)
+        this.props.enqueueSnackbar('Erreur lors de la souscription au topic : ' + err.message, { variant: 'error', autoHideDuration: undefined })
+      })
   }
 
   componentWillUnmount() {
     window.removeEventListener('blur', this.onWindowBlur)
+    this.cleanup()
+  }
+
+  changeSubscribeState = newState => {
+    this.setState({ subscribeState: newState })
+    this.props.onSubscribeStateChange(newState)
+  }
+
+  cleanup() {
+    if (!this.createdQueueUrl) {
+      return Promise.resolve()
+    }
+
+    return awsEnv.sqs.deleteQueue({
+      QueueUrl: this.createdQueueUrl,
+    }).promise()
+      .catch(console.error)
+  }
+
+  fetchSamplePayloads() {
+    getSamplePayloads(this.props.topic)
+      .then(payloads => this.setState({ samplePayloads: payloads }))
+      .catch(console.error)
   }
 
   onWindowBlur = () => {
@@ -144,11 +175,12 @@ class TopicMonitor extends PureComponent {
           ReceiptHandle: message.ReceiptHandle,
         }).promise()
       } catch (e) {
+        console.log('Error while trying to handle incoming message.')
         console.error(e)
         await awsEnv.sqs.changeMessageVisibility({
           QueueUrl,
           ReceiptHandle: message.ReceiptHandle,
-          VisibilityTimeout: 0,
+          VisibilityTimeout: 10,
         }).promise()
       }
     })
@@ -208,6 +240,16 @@ class TopicMonitor extends PureComponent {
     this.props.enqueueSnackbar('Message replayed!', { variant: 'success' })
   }
 
+  renderSamplePayload = (sample) => {
+    return (
+      <SamplePayload
+        {...sample}
+        editAndReplayMessage={this.openEditAndReplayModal}
+      />
+    )
+  }
+
+
   newMessageProps = { isNew: true }
   renderNewMessage = (message) => {
     return this.renderMessage(message, this.newMessageProps)
@@ -234,31 +276,25 @@ class TopicMonitor extends PureComponent {
   }
 
   render() {
-    const { newMessages, currentMessages, historyMessages, editAndReplayMessage, favoriteMessages } = this.state
-    console.log(favoriteMessages)
+    const { newMessages, currentMessages, historyMessages, editAndReplayMessage, favoriteMessages, samplePayloads, subscribeState } = this.state
+
+    if (subscribeState !== 'subscribed') {
+      return null
+    }
+
     return (
       <div>
         <div className="LeftColumn">
           <h3>Typical Payloads</h3>
 
-            <div className="TypicalPayload">
-              <div className="TypicalPayload-actions">
-                <IconButton className="TypicalPayload-action">
-                  <EditIcon style={{ width: 16, height: 16 }} />
-                </IconButton>
-                <IconButton className="TypicalPayload-action">
-                  <ReplayIcon style={{ width: 16, height: 16 }} />
-                </IconButton>
-                <IconButton className="TypicalPayload-action">
-                  <FileCopyIcon style={{ width: 16, height: 16 }} />
-                </IconButton>
-              </div>
+          {!samplePayloads && (
+            <CircularProgress />
+          )}
 
-              <p className="TypicalPayload-title">
-                new inbound phone call
-              </p>
-            </div>
-          ))}
+          {samplePayloads && samplePayloads.map(this.renderSamplePayload)}
+          {samplePayloads && samplePayloads.length === 0 && (
+            <p>No sample payloads.</p>
+          )}
 
           <h3>Favorite payloads</h3>
 
@@ -329,6 +365,8 @@ class EditReplayModal extends PureComponent {
 
     return (
       <Dialog
+        fullWidth
+        maxWidth="lg"
         open={this.props.open}
         onClose={this.props.closeModal}
       >

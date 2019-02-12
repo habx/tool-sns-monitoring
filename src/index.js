@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import 'whatwg-fetch'
 import * as serviceWorker from './serviceWorker';
 import { SnackbarProvider } from 'notistack'
 import CloseIcon from '@material-ui/icons/Close'
