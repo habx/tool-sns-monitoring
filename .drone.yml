@@ -32,6 +32,7 @@ pipeline:
     group: build
     environment:
       - NPM_TOKEN=${NPM_TOKEN}
+      - PUBLIC_URL=/tool-sns-monitoring
     commands:
       - npm run build
     volumes:
