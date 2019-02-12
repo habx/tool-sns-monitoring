@@ -1,15 +1,8 @@
 
 import React, { Fragment, PureComponent } from 'react'
 import { AWSEnvironment } from '@habx/lib-mq-aws/dist/src/AWSEnvironment'
-import ensureSQS from '@habx/lib-mq-aws/dist/src/lib/ensureSQS'
 import ensureSQSAllowsSNS from '@habx/lib-mq-aws/dist/src/lib/ensureSQSAllowsSNS'
 import { withSnackbar } from 'notistack'
-import Visibility from 'visibilityjs'
-import IconButton from '@material-ui/core/IconButton'
-import EditIcon from '@material-ui/icons/Edit'
-import FileCopyIcon from '@material-ui/icons/FileCopy'
-import ReplayIcon from '@material-ui/icons/Replay'
-import memoizee from 'memoizee'
 import JSONEditor from 'jsoneditor'
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
@@ -18,11 +11,8 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import cx from 'classnames'
 import getSamplePayloads from './drivers/getSamplePayloads'
 
-// import aws from 'aws-sdk'
-// import { Consumer } from 'aws-sqs-consumer'
 import 'jsoneditor/dist/jsoneditor.min.css'
 import './TopicMonitor.css'
 import Message from './Message'
@@ -72,8 +62,6 @@ const serializeMessagesForTopic = (topicName, messages) => {
   window.localStorage.setItem(topicName + '/messages', JSON.stringify(messages))
 }
 
-const memoizedJsonParse = memoizee((string) => JSON.parse(string))
-
 class TopicMonitor extends PureComponent {
   constructor(props) {
     super(props)
@@ -103,19 +91,17 @@ class TopicMonitor extends PureComponent {
 
       await ensureSQSAllowsSNS(awsEnv, QueueName, [this.props.topic], {createIfInexistant: true}) //
 
-      const res = await awsEnv.sns.subscribe({
+      await awsEnv.sns.subscribe({
         Protocol: 'sqs',
         TopicArn: awsEnv.getArn('sns', this.props.topic),
         Endpoint: awsEnv.getArn('sqs', QueueName),
       }).promise()
 
       this.poll()
-      // consumer.createPool()
 
       this.changeSubscribeState('subscribed')
 
     })().catch(err => {
-      // console.log(this.props.enqueueSnackbar)
         this.props.enqueueSnackbar('Erreur lors de la souscription au topic : ' + err.message, { variant: 'error', autoHideDuration: undefined })
       })
   }
