@@ -26,6 +26,17 @@ pipeline:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+  build:
+    image: habx/node-base:9-alpine-npm6
+    secrets: [ NPM_TOKEN ]
+    group: build
+    environment:
+      - NPM_TOKEN=${NPM_TOKEN}
+    commands:
+      - npm run build
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
   push-to-ecr-on-push:
     image: plugins/ecr
     ecr_access_key: $${AWS_ACCESS_KEY_ID}
