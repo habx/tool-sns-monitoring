@@ -1,4 +1,8 @@
-FROM habx/node-base:9-alpine
+FROM nginx:1-alpine
 
-RUN rm ~/.npmrc
-COPY . .
+COPY build /app/build
+COPY version.txt entrypoint.sh /app/
+
+COPY nginx.conf /etc/nginx/
+
+CMD ["sh", "-c", "/app/entrypoint.sh && nginx"]
