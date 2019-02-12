@@ -14,6 +14,11 @@ class MonitorBar extends PureComponent {
   }
 
   onInputChange = (e) => this.setState({ inputText: e.target.value })
+  onInputKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      this.onMonitorButtonClick()
+    }
+  }
   setTopicMonitored = () => {
     this.props.onMonitoredTopicChange(this.state.inputText)
   }
@@ -56,6 +61,7 @@ class MonitorBar extends PureComponent {
             autoFocus
             className="MonitorBar-input"
             onChange={this.onInputChange}
+            onKeyPress={this.onInputKeyPress}
             value={inputText}
             variant="outlined"
             placeholder="Type the name of a topic"

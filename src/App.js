@@ -24,17 +24,12 @@ window.addEventListener('blur', onWindowBlur)
 
 class App extends PureComponent {
   state = {
-    topicMonitored: 'local-webhooks-ilyes12',
+    topicMonitored: null,
     subscribeState: null, // 'preparing', 'subscribed'
   }
 
   componentWillMount() {
     this.randomSpongebob()
-    // window.onbeforeunload = () => 'Cleanup pls!'
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.onWindowUnload)
   }
 
   randomSpongebob() {
@@ -45,10 +40,6 @@ class App extends PureComponent {
   spongebobThenRandomSpongebob() {
     makeSpongebobAppear()
     this.randomSpongebob()
-  }
-
-  onWindowUnload() {
-    return 'Tes'
   }
 
   setTopicMonitored = (topic) => {
