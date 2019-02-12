@@ -20,7 +20,7 @@ export default withSnackbar(class SamplePayload extends PureComponent {
 
   render() {
     const {
-      className,
+      name,
     } = this.props
 
     return (
@@ -35,7 +35,7 @@ export default withSnackbar(class SamplePayload extends PureComponent {
         </div>
 
         <p className="TypicalPayload-title">
-          {this.props.name}
+          {name}
         </p>
       </div>
     )

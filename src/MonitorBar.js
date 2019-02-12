@@ -1,6 +1,5 @@
 
 import React, { PureComponent } from 'react'
-import cx from 'classnames'
 import EditIcon from '@material-ui/icons/Edit'
 import GraphicEqIcon from '@material-ui/icons/GraphicEq'
 import TextField from '@material-ui/core/TextField'
@@ -14,6 +13,11 @@ class MonitorBar extends PureComponent {
   }
 
   onInputChange = (e) => this.setState({ inputText: e.target.value })
+  onInputKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      this.onMonitorButtonClick()
+    }
+  }
   setTopicMonitored = () => {
     this.props.onMonitoredTopicChange(this.state.inputText)
   }
@@ -56,6 +60,7 @@ class MonitorBar extends PureComponent {
             autoFocus
             className="MonitorBar-input"
             onChange={this.onInputChange}
+            onKeyPress={this.onInputKeyPress}
             value={inputText}
             variant="outlined"
             placeholder="Type the name of a topic"
