@@ -1,19 +1,9 @@
-import React, { Fragment, PureComponent } from 'react';
-import logo from './logo.svg';
+import React, { PureComponent } from 'react';
 import cx from 'classnames'
-import EditIcon from '@material-ui/icons/Edit'
-import FileCopyIcon from '@material-ui/icons/FileCopy'
-import ReplayIcon from '@material-ui/icons/Replay'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-import IconButton from '@material-ui/core/IconButton'
-import InputAdornment from '@material-ui/core/InputAdornment'
 import makeSpongebobAppear from './makeSpongebobAppear'
 import './App.css';
 
-import Message from './Message'
 import MonitorBar from './MonitorBar'
-
 import TopicMonitor from './TopicMonitor'
 
 window.isWindowFocused = document.hasFocus()
@@ -50,7 +40,7 @@ class App extends PureComponent {
   topicMonitorRef = (el) => this.topicMonitorInstance = el
 
   render() {
-    const { inputText, topicMonitored, subscribeState } = this.state
+    const { topicMonitored, subscribeState } = this.state
 
     return (
       <div className="App">

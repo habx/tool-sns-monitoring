@@ -69,17 +69,8 @@ class Message extends PureComponent {
     }
   }
 
-  renderActions = () => {
-    if (this.props.compressedView) {
-      return (
-        'e'
-      )
-    }
-  }
-
   render() {
     const {
-      className,
       data,
       isNew,
       isFavorite,

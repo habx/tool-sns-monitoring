@@ -1,6 +1,5 @@
 
 import React, { PureComponent } from 'react'
-import cx from 'classnames'
 import EditIcon from '@material-ui/icons/Edit'
 import GraphicEqIcon from '@material-ui/icons/GraphicEq'
 import TextField from '@material-ui/core/TextField'

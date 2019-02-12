@@ -2,7 +2,6 @@
 var data = 'https://i.imgur.com/zQkEpJO.gif'
 var spongebob = function () {
 
-  var shock = document.createElement('div');
   var img = new Image();
   img.src = data;
   img.style.width = '374px';
