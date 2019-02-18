@@ -1,6 +1,11 @@
 .App {
 }
 
+.SettingsButton {
+  float: right;
+  height: 56px;
+}
+
 .LeftColumn, .RightColumn {
   padding: 32px;
   overflow: auto;

@@ -1,5 +1,7 @@
 
 import React, { Fragment, PureComponent } from 'react'
+import { connect } from 'react-redux'
+import memoizee from 'memoizee'
 import { AWSEnvironment } from '@habx/lib-mq-aws/dist/src/AWSEnvironment'
 import ensureSQSAllowsSNS from '@habx/lib-mq-aws/dist/src/lib/ensureSQSAllowsSNS'
 import { withSnackbar } from 'notistack'
@@ -18,16 +20,16 @@ import './TopicMonitor.css'
 import Message from './Message'
 import SamplePayload from './SamplePayload'
 
-const accountId = '724009402066'
-const region = 'eu-west-1'
-const accessKeyId = 'AKIAJE2VZKV4ZFQFSXYA'
-const secretAccessKey = 'GdpG7quOT344IKl+fZSWV6MgT3MmJYPCFMG1HzBc'
-const awsEnv = new AWSEnvironment({
-  accountId,
-  region,
-  accessKeyId,
-  secretAccessKey,
-})
+// const accountId = '724009402066'
+// const region = 'eu-west-1'
+// const accessKeyId = 'AKIAJE2VZKV4ZFQFSXYA'
+// const secretAccessKey = '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'
+// const awsEnv = new AWSEnvironment({
+//   accountId,
+//   region,
+//   accessKeyId,
+//   secretAccessKey,
+// })
 
 // aws.config.update({
 //   region,
@@ -37,8 +39,6 @@ const awsEnv = new AWSEnvironment({
 
 // const SQS = new aws.SQS()
 // const SNS = new aws.SNS()
-
-const namespace = 'ilyes'
 
 const unserializeMessagesForTopic = (topicName) => {
   const messagesStored = window.localStorage.getItem(topicName + '/messages')
@@ -76,8 +76,12 @@ class TopicMonitor extends PureComponent {
     }
   }
   
+  getAwsEnvPure = memoizee((awsCredentials) => new AWSEnvironment(awsCredentials))
+  getAwsEnv = () => this.getAwsEnvPure(this.props.awsCredentials)
 
   componentDidMount() {
+    const awsEnv = this.getAwsEnv()
+
     window.addEventListener('blur', this.onWindowBlur)
     window.addEventListener('beforeunload', this.onWindowUnload)
     this.fetchSamplePayloads()
@@ -117,6 +121,8 @@ class TopicMonitor extends PureComponent {
   }
 
   cleanup() {
+    const awsEnv = this.getAwsEnv()
+
     if (!this.createdQueueUrl) {
       return Promise.resolve()
     }
@@ -142,34 +148,43 @@ class TopicMonitor extends PureComponent {
     }
   }
 
-  getQueueName = () => `local-monitor-${namespace}-${this.props.topic}`
-  getQueueUrl = () => awsEnv.getSQSUrl(this.getQueueName())
+  getQueueName = () => `local-monitor-${this.props.namespace}-${this.props.topic}`
+  getQueueUrl = () => {
+    const awsEnv = this.getAwsEnv()
+    return awsEnv.getSQSUrl(this.getQueueName())
+  }
 
   poll = async () => {
-    const QueueUrl = this.getQueueUrl()
-    const { Messages } = await awsEnv.sqs.receiveMessage({
-      QueueUrl,
-      VisibilityTimeout: 30,
-      WaitTimeSeconds: 20,
-    }).promise()
+    try {
+      const awsEnv = this.getAwsEnv()
+      const QueueUrl = this.getQueueUrl()
+      const { Messages } = await awsEnv.sqs.receiveMessage({
+        QueueUrl,
+        VisibilityTimeout: 30,
+        WaitTimeSeconds: 20,
+      }).promise()
 
-    Messages.forEach(async (message) => {
-      try {
-        await this.handleMessage(JSON.parse(message.Body))
-        await awsEnv.sqs.deleteMessage({
-          QueueUrl,
-          ReceiptHandle: message.ReceiptHandle,
-        }).promise()
-      } catch (e) {
-        console.log('Error while trying to handle incoming message.')
-        console.error(e)
-        await awsEnv.sqs.changeMessageVisibility({
-          QueueUrl,
-          ReceiptHandle: message.ReceiptHandle,
-          VisibilityTimeout: 10,
-        }).promise()
-      }
-    })
+      Messages.forEach(async (message) => {
+        try {
+          await this.handleMessage(JSON.parse(message.Body))
+          await awsEnv.sqs.deleteMessage({
+            QueueUrl,
+            ReceiptHandle: message.ReceiptHandle,
+          }).promise()
+        } catch (e) {
+          console.log('Error while trying to handle incoming message.')
+          console.error(e)
+          await awsEnv.sqs.changeMessageVisibility({
+            QueueUrl,
+            ReceiptHandle: message.ReceiptHandle,
+            VisibilityTimeout: 10,
+          }).promise()
+        }
+      })
+    } catch (e) {
+      this.props.enqueueSnackbar('Error while polling messages:' + e.message, { variant: 'error' })
+      console.error(e)
+    }
 
     this.poll()
   }
@@ -219,6 +234,7 @@ class TopicMonitor extends PureComponent {
   }
 
   replayMessage = async (Message) => {
+    const awsEnv = this.getAwsEnv()
     await awsEnv.sns.publish({
       Message,
       TopicArn: awsEnv.getSNSArn(this.props.topic),
@@ -315,7 +331,12 @@ class TopicMonitor extends PureComponent {
 }
 
 TopicMonitor = withSnackbar(TopicMonitor)
-export default TopicMonitor
+const mapStateToProps = ({ namespace, awsCredentials }) => ({
+  namespace,
+  awsCredentials,
+})
+
+export default connect(mapStateToProps)(TopicMonitor)
 
 class EditReplayModal extends PureComponent {
   state = {
