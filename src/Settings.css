@@ -1,0 +1,25 @@
+
+.Settings-nav {
+  width: 842px;
+  margin-bottom: 28px;
+}
+
+.Settings-title {
+  width: 842px;
+  margin-top: 0;
+  margin-bottom: 28px;
+}
+
+.Settings {
+  justify-content: center;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  z-index: 100;
+}

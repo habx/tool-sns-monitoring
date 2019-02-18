@@ -1,10 +1,13 @@
 
 import React, { PureComponent } from 'react'
+import { connect } from 'react-redux'
 import EditIcon from '@material-ui/icons/Edit'
 import GraphicEqIcon from '@material-ui/icons/GraphicEq'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
+
+import { setTopicMonitored } from './actions'
 
 class MonitorBar extends PureComponent {
   state = {
@@ -18,12 +21,9 @@ class MonitorBar extends PureComponent {
       this.onMonitorButtonClick()
     }
   }
-  setTopicMonitored = () => {
-    this.props.onMonitoredTopicChange(this.state.inputText)
-  }
 
   onMonitorButtonClick = () => {
-    this.setTopicMonitored()
+    this.props.setTopicMonitored(this.state.inputText)
     this.setDisplay()
   }
 
@@ -77,7 +77,7 @@ class MonitorBar extends PureComponent {
             Monitor {inputText}
             <GraphicEqIcon />
           </Button>
-          <Button key="cancel-btn" className="MonitorBar-action" variant="outlined" onClick={this.setDisplay}>
+          <Button disabled={!topicMonitored} key="cancel-btn" className="MonitorBar-action" variant="outlined" onClick={this.setDisplay}>
             Cancel
           </Button>
         </div>
@@ -93,4 +93,11 @@ class MonitorBar extends PureComponent {
   }
 }
 
-export default MonitorBar
+const mapStateToProps = ({ topicMonitored }) => ({
+  topicMonitored,
+})
+const mapDispatchToProps = {
+  setTopicMonitored,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MonitorBar)

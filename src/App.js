@@ -1,7 +1,11 @@
 import React, { PureComponent } from 'react';
 import cx from 'classnames'
+import { connect } from 'react-redux'
 import makeSpongebobAppear from './makeSpongebobAppear'
 import './App.css';
+import KeyIcon from '@material-ui/icons/VpnKey'
+import Button from '@material-ui/core/Button'
+import Settings from './Settings'
 
 import MonitorBar from './MonitorBar'
 import TopicMonitor from './TopicMonitor'
@@ -14,8 +18,9 @@ window.addEventListener('blur', onWindowBlur)
 
 class App extends PureComponent {
   state = {
-    topicMonitored: null,
     subscribeState: null, // 'preparing', 'subscribed'
+    awsEnv: null,
+    showSettingsPage: false,
   }
 
   componentWillMount() {
@@ -32,29 +37,41 @@ class App extends PureComponent {
     this.randomSpongebob()
   }
 
-  setTopicMonitored = (topic) => {
-    this.setState({ topicMonitored: topic })
-
-  }
   onSubscribeStateChange = (newState) => this.setState({ subscribeState: newState })
   topicMonitorRef = (el) => this.topicMonitorInstance = el
 
+  openSettings = () => this.setState({ showSettingsPage: true })
+  closeSettings = () => this.setState({ showSettingsPage: false })
+
   render() {
-    const { topicMonitored, subscribeState } = this.state
+    const { subscribeState, showSettingsPage } = this.state
+    const { topicMonitored, isSetUp, namespace, awsCredentials } = this.props
+
+    let monitorKey = 'no'
+    if (awsCredentials) {
+      monitorKey = `${topicMonitored}:${awsCredentials.accountId}:${awsCredentials.region}:${awsCredentials.accessKeyId}:${awsCredentials.secretAccessKey}:${namespace}`
+    }
 
     return (
       <div className="App">
+        {(!isSetUp || showSettingsPage) && (
+          <Settings
+            canClose={isSetUp}
+            onClose={this.closeSettings}
+          />
+        )}
+
         <div className="FixedTopBar">
+          <Button className="SettingsButton" onClick={this.openSettings}>
+            <KeyIcon />
+          </Button>
           {topicMonitored !== null && (
             <p className="MonitoringState">
               We monitor {topicMonitored}<br />
               State: {subscribeState} <span className={cx('MonitoringState-dot', subscribeState === 'subscribed' && 'success')}></span>
             </p> )}
 
-          <MonitorBar
-            topicMonitored={topicMonitored}
-            onMonitoredTopicChange={this.setTopicMonitored}
-          />
+          <MonitorBar />
 
         </div>
 
@@ -73,7 +90,7 @@ class App extends PureComponent {
 
         {topicMonitored && (
           <TopicMonitor
-            key={topicMonitored}
+            key={monitorKey}
             topic={topicMonitored}
             onSubscribeStateChange={this.onSubscribeStateChange}
           />
@@ -83,4 +100,11 @@ class App extends PureComponent {
   }
 }
 
-export default App
+const mapStateToProps = ({ topicMonitored, awsCredentials, namespace }) => ({
+  topicMonitored,
+  isSetUp: !!awsCredentials && !!namespace,
+  namespace,
+  awsCredentials,
+})
+
+export default connect(mapStateToProps)(App)
