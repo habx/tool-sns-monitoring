@@ -14,51 +14,32 @@ import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import getSamplePayloads from './drivers/getSamplePayloads'
+import isWindowFocused from './drivers/isWindowFocused'
 
 import 'jsoneditor/dist/jsoneditor.min.css'
 import './TopicMonitor.css'
 import Message from './Message'
 import SamplePayload from './SamplePayload'
 
-// const accountId = '724009402066'
-// const region = 'eu-west-1'
-// const accessKeyId = 'AKIAJE2VZKV4ZFQFSXYA'
-// const secretAccessKey = 'GdpG7quOT344IKl+fZSWV6MgT3MmJYPCFMG1HzBc'
-// const awsEnv = new AWSEnvironment({
-//   accountId,
-//   region,
-//   accessKeyId,
-//   secretAccessKey,
-// })
-
-// aws.config.update({
-//   region,
-//   accessKeyId,
-//   secretAccessKey,
-// })
-
-// const SQS = new aws.SQS()
-// const SNS = new aws.SNS()
-
-const unserializeMessagesForTopic = (topicName) => {
+const unserializeMessagesForTopic = (topicName: string) => {
   const messagesStored = window.localStorage.getItem(topicName + '/messages')
   return (messagesStored
     ? JSON.parse(messagesStored)
     : [])
 }
 
-const serializeFavoritesForTopic = (topicName, favorites) => {
+const serializeFavoritesForTopic = (topicName: string, favorites: Array<any>) => {
   window.localStorage.setItem(topicName + '/favorites', JSON.stringify(favorites))
 }
 
-const unserializeFavoritesForTopic = (topicName) => {
+const unserializeFavoritesForTopic = (topicName: string) => {
   const favorites = window.localStorage.getItem(topicName + '/favorites')
   return (favorites
     ? JSON.parse(favorites)
     : [])
 }
 
-const serializeMessagesForTopic = (topicName, messages) => {
+const serializeMessagesForTopic = (topicName: string, messages: Array<any>) => {
   window.localStorage.setItem(topicName + '/messages', JSON.stringify(messages))
 }
 
@@ -181,12 +162,12 @@ class TopicMonitor extends PureComponent {
           }).promise()
         }
       })
+      this.poll()
     } catch (e) {
       this.props.enqueueSnackbar('Error while polling messages:' + e.message, { variant: 'error' })
       console.error(e)
     }
 
-    this.poll()
   }
 
   addFavorite = (message) => {
@@ -206,7 +187,7 @@ class TopicMonitor extends PureComponent {
   }
 
   handleMessage = async (message) => {
-    const key = window.isWindowFocused
+    const key = isWindowFocused()
       ? 'currentMessages'
       : 'newMessages'
     const newList = this.state[key].slice()
