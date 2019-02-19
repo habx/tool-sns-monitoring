@@ -8,7 +8,13 @@ import FileCopyIcon from '@material-ui/icons/FileCopy'
 
 import './SamplePayload.css'
 
-export default withSnackbar(class SamplePayload extends PureComponent {
+type Props = {
+  name: string,
+  enqueueSnackbar: (string, Object) => void,
+};
+type State = typeof undefined;
+
+export default withSnackbar(class SamplePayload extends PureComponent<Props, State> {
   editAndReplay = () => {
     this.props.editAndReplayMessage(this.props.data)
   }

@@ -1,3 +1,4 @@
+// @flow
 
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
@@ -8,8 +9,18 @@ import Button from '@material-ui/core/Button'
 import InputAdornment from '@material-ui/core/InputAdornment'
 
 import { setTopicMonitored } from './actions'
+import type { AppState } from './types/ActionsAndStore'
 
-class MonitorBar extends PureComponent {
+type Props = {
+  topicMonitored: $PropertyType<AppState, 'topicMonitored'>,
+  setTopicMonitored: typeof setTopicMonitored,
+}
+type State = {|
+  editing: boolean,
+  inputText: ?string,
+|}
+
+class MonitorBar extends PureComponent<Props, State> {
   state = {
     editing: !this.props.topicMonitored,
     inputText: '',

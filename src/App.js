@@ -1,6 +1,10 @@
+// @flow
+
 import React, { PureComponent } from 'react';
 import cx from 'classnames'
+import { compose } from 'recompose'
 import { connect } from 'react-redux'
+import { withSnackbar } from 'notistack'
 import makeSpongebobAppear from './makeSpongebobAppear'
 import './App.css';
 import KeyIcon from '@material-ui/icons/VpnKey'
@@ -10,16 +14,23 @@ import Settings from './Settings'
 import MonitorBar from './MonitorBar'
 import TopicMonitor from './TopicMonitor'
 
-window.isWindowFocused = document.hasFocus()
-const onWindowFocus = () => window.isWindowFocused = true
-const onWindowBlur = () => window.isWindowFocused = false
-window.addEventListener('focus', onWindowFocus)
-window.addEventListener('blur', onWindowBlur)
+import type { AppState } from './types/ActionsAndStore'
 
-class App extends PureComponent {
+type Props = {
+  topicMonitored: $PropertyType<AppState, 'topicMonitored'>,
+  isSetUp: boolean,
+  namespace: $PropertyType<AppState, 'namespace'>,
+  awsCredentials: $PropertyType<AppState, 'awsCredentials'>,
+}
+
+type State = {
+  subscribeState: ?('preparing' | 'subscribed'),
+  showSettingsPage: boolean,
+}
+
+class App extends PureComponent<Props, State> {
   state = {
     subscribeState: null, // 'preparing', 'subscribed'
-    awsEnv: null,
     showSettingsPage: false,
   }
 
@@ -38,7 +49,6 @@ class App extends PureComponent {
   }
 
   onSubscribeStateChange = (newState) => this.setState({ subscribeState: newState })
-  topicMonitorRef = (el) => this.topicMonitorInstance = el
 
   openSettings = () => this.setState({ showSettingsPage: true })
   closeSettings = () => this.setState({ showSettingsPage: false })
@@ -76,10 +86,7 @@ class App extends PureComponent {
         </div>
 
         <div className="FixedTopBar not-fixed-and-invisible">
-          <MonitorBar
-            topicMonitored={topicMonitored}
-            onMonitoredTopicChange={this.setTopicMonitored}
-          />
+          <MonitorBar />
 
           {topicMonitored !== null && (
             <p className="MonitoringState">
@@ -107,4 +114,7 @@ const mapStateToProps = ({ topicMonitored, awsCredentials, namespace }) => ({
   awsCredentials,
 })
 
-export default connect(mapStateToProps)(App)
+export default compose(
+  connect(mapStateToProps),
+  withSnackbar,
+)(App)
