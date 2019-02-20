@@ -1,12 +1,17 @@
-
+// @flow
 /*
  * Store State
  */
-export type AppState = $ReadOnly<{|
+import type { PersistState } from 'redux-persist/lib/types.js.flow'
+export type MyAppState = {|
   topicMonitored: ?string,
   awsCredentials: ?AwsCredentialsState,
   namespace: ?string,
-|}>;
+|};
+export type ReduxPersistState = {|
+  _persist: PersistState,
+|};
+export type AppState = $ReadOnly<{| ...MyAppState, ...ReduxPersistState |}>
 
 export type AwsCredentialsState = $ReadOnly<{|
   accountId: string,

@@ -1,44 +1,38 @@
 // @flow
 
-import { createActions, handleActions } from 'redux-actions'
+import { createAction, handleActions } from 'redux-actions'
+
+// type _ExtractReturn<B, F: (...args: any[]) => B> = B
+// export type ExtractReturn<F> = _ExtractReturn<*, F>
 
 import type { ReduxReducer } from 'redux-actions'
 import type {
   AppAction,
-  AppState,
-  SetTopicMonitoredAction,
-  SetTopicMonitoredActionCreator,
-  SetAwsCredentialsAction,
-  SetAwsCredentialsActionCreator,
-  SetNamespaceAction,
-  SetNamespaceActionCreator,
+  MyAppState,
+  AwsCredentialsState,
 } from './types/ActionsAndStore'
 
-const {
-  setTopicMonitored,
-  setAwsCredentials,
-  setNamespace,
-}: {
-  setTopicMonitored: SetTopicMonitoredActionCreator,
-  setAwsCredentials: SetAwsCredentialsActionCreator,
-  setNamespace: SetNamespaceActionCreator,
-} = createActions(
-  {},
-  'SET_TOPIC_MONITORED',
-  'SET_AWS_CREDENTIALS',
-  'SET_NAMESPACE',
-)
+const SET_TOPIC_MONITORED = 'SET_TOPIC_MONITORED'
+const setTopicMonitored = createAction(SET_TOPIC_MONITORED, (topic: string) => topic)
+const setAwsCredentials = createAction('SET_AWS_CREDENTIALS')
+const setNamespace = createAction<string, ?string>('SET_NAMESPACE')
 
-const appInitialState: AppState = {
+type Actions =
+  | ExtractReturn<typeof setTopicMonitored>
+  | ExtractReturn<typeof setAwsCredentials>
+  | ExtractReturn<typeof setNamespace>
+
+const appInitialState: MyAppState = {
   topicMonitored: null,
   awsCredentials: null,
   namespace: null,
 }
 
-const appReducer: ReduxReducer<AppState, AppAction> = handleActions({
-  SET_TOPIC_MONITORED: (state: AppState, action: SetTopicMonitoredAction): AppState => ({ ...state, topicMonitored: action.payload }),
-  SET_AWS_CREDENTIALS: (state: AppState, action: SetAwsCredentialsAction): AppState => ({ ...state, awsCredentials: action.payload }),
-  SET_NAMESPACE: (state: AppState, action: SetNamespaceAction): AppState => ({ ...state, namespace: action.payload }),
+
+const appReducer: ReduxReducer<MyAppState, AppAction> = handleActions({
+  SET_TOPIC_MONITORED: (state: MyAppState, action): MyAppState => ({ ...state, topicMonitored: action.payload }),
+  SET_AWS_CREDENTIALS: (state: MyAppState, action: ExtractReturn<typeof setAwsCredentials>): MyAppState => ({ ...state, awsCredentials: action.payload }),
+  SET_NAMESPACE: (state: MyAppState, action: ExtractReturn<typeof setNamespace>): MyAppState => ({ ...state, namespace: action.payload }),
 }, appInitialState)
 
 export default appReducer

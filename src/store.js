@@ -2,6 +2,7 @@
 
 import { createStore } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
+import type { PersistState } from 'redux-persist/lib/types.js.flow'
 import storage from 'redux-persist/lib/storage'
 import appReducer from './actions'
 
@@ -14,6 +15,7 @@ const persistConfig = {
   whitelist: ['namespace', 'awsCredentials', 'topicMonitored'],
 }
 
+type PersistPartial = { _persist: PersistState }
 const persistedReducer = persistReducer(persistConfig, appReducer)
 
 const store: Store<AppState, AppAction> = createStore(persistedReducer)
