@@ -131,7 +131,7 @@ class MonitorBar extends PureComponent {
             {inputFocused && (
               <div className="MonitorBar-input-suggestions">
                 {!fetchingTopics && filteredTopics.map(t => (
-                  <div className="MonitorBar-input-suggestion" onClick={() => this.setText(t.value)}>
+                  <div className="MonitorBar-input-suggestion" onMouseDown={() => this.setText(t.value)}>
                     {t.label}
                   </div>
                 ))}
