@@ -1,4 +1,3 @@
-// @flow
 
 import React, { PureComponent } from 'react';
 import cx from 'classnames'
@@ -14,21 +13,7 @@ import Settings from './Settings'
 import MonitorBar from './MonitorBar'
 import TopicMonitor from './TopicMonitor'
 
-import type { AppState } from './types/ActionsAndStore'
-
-type Props = {
-  topicMonitored: $PropertyType<AppState, 'topicMonitored'>,
-  isSetUp: boolean,
-  namespace: $PropertyType<AppState, 'namespace'>,
-  awsCredentials: $PropertyType<AppState, 'awsCredentials'>,
-}
-
-type State = {
-  subscribeState: ?('preparing' | 'subscribed'),
-  showSettingsPage: boolean,
-}
-
-class App extends PureComponent<Props, State> {
+class App extends PureComponent {
   state = {
     subscribeState: null, // 'preparing', 'subscribed'
     showSettingsPage: false,

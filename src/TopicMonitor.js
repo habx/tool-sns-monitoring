@@ -214,7 +214,11 @@ class TopicMonitor extends PureComponent {
     })
   }
 
-  replayMessage = async (Message) => {
+  replayMessage = async (MessageUnknownType) => {
+    const Message = typeof MessageUnknownType === 'object'
+      ? JSON.stringify(MessageUnknownType)
+      : `${MessageUnknownType}`
+
     const awsEnv = this.getAwsEnv()
     await awsEnv.sns.publish({
       Message,

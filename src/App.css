@@ -71,8 +71,43 @@
   margin-right: 8px !important;
 }
 
-.MonitorBar-input {
+.MonitorBar-input-wrapper {
+  position: relative;
+  display: inline-flex;
   margin-right: 16px !important;
+  vertical-align: top;
+}
+
+.MonitorBar-input {
+}
+
+.MonitorBar-input-suggestions {
+  z-index: 100;
+  position: absolute;
+  background-color: white;
+  top: 64px;
+  left: 0;
+  right: 0;
+  max-height: 230px;
+  overflow: auto;
+  padding: 8px 0;
+  box-shadow: 1px 1px 10px 0px rgba(0,0,0,0.2);
+}
+
+.MonitorBar-input-suggestion {
+  cursor: pointer;
+  padding: 12px 16px;
+}
+.MonitorBar-input-suggestion.placeholder {
+  cursor: initial;
+  color: #999;
+}
+.MonitorBar-input-suggestion.placeholder:hover {
+  background-color: transparent;
+}
+
+.MonitorBar-input-suggestion:hover {
+  background-color: #eee;
 }
 
 .TypicalPayload {
