@@ -9,18 +9,12 @@ import type { ReduxReducer } from 'redux-actions'
 import type {
   AppAction,
   MyAppState,
-  AwsCredentialsState,
 } from './types/ActionsAndStore'
 
 const SET_TOPIC_MONITORED = 'SET_TOPIC_MONITORED'
 const setTopicMonitored = createAction(SET_TOPIC_MONITORED, (topic: string) => topic)
 const setAwsCredentials = createAction('SET_AWS_CREDENTIALS')
 const setNamespace = createAction<string, ?string>('SET_NAMESPACE')
-
-type Actions =
-  | ExtractReturn<typeof setTopicMonitored>
-  | ExtractReturn<typeof setAwsCredentials>
-  | ExtractReturn<typeof setNamespace>
 
 const appInitialState: MyAppState = {
   topicMonitored: null,

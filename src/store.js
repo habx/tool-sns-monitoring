@@ -15,7 +15,6 @@ const persistConfig = {
   whitelist: ['namespace', 'awsCredentials', 'topicMonitored'],
 }
 
-type PersistPartial = { _persist: PersistState }
 const persistedReducer = persistReducer(persistConfig, appReducer)
 
 const store: Store<AppState, AppAction> = createStore(persistedReducer)
