@@ -56,7 +56,7 @@ class TopicMonitor extends PureComponent {
       favoriteMessages: unserializeFavoritesForTopic(this.props.topic),
     }
   }
-  
+
   getAwsEnvPure = memoizee((awsCredentials) => new AWSEnvironment(awsCredentials))
   getAwsEnv = () => this.getAwsEnvPure(this.props.awsCredentials)
 
@@ -129,7 +129,7 @@ class TopicMonitor extends PureComponent {
     }
   }
 
-  getQueueName = () => `local-monitor-${this.props.namespace}-${this.props.topic}`
+  getQueueName = () => `dev-monitor-${this.props.namespace}-${this.props.topic}`
   getQueueUrl = () => {
     const awsEnv = this.getAwsEnv()
     return awsEnv.getSQSUrl(this.getQueueName())
@@ -291,7 +291,7 @@ class TopicMonitor extends PureComponent {
           </div>
 
           <h3>History</h3>
-          
+
           <div className="Messages">
             {historyMessages.map(this.renderMessage)}
           </div>
