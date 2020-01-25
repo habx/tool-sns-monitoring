@@ -9,7 +9,7 @@
     "aws-sqs-consumer": "^2.0.1",
     "classnames": "^2.2.6",
     "color-hash": "^1.0.3",
-    "copy-to-clipboard": "^3.0.8",
+    "copy-to-clipboard": "^3.2.0",
     "dayjs": "^1.8.4",
     "flow-bin": "^0.93.0",
     "json-formatter-js": "^2.2.1",
