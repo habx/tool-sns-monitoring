@@ -11,7 +11,7 @@
     "color-hash": "^1.0.3",
     "copy-to-clipboard": "^3.0.8",
     "dayjs": "^1.8.4",
-    "flow-bin": "^0.93.0",
+    "flow-bin": "^0.116.1",
     "json-formatter-js": "^2.2.1",
     "jsoneditor": "^5.28.2",
     "lodash.isequalwith": "^4.4.0",
