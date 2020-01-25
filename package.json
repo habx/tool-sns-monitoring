@@ -25,7 +25,7 @@
     "recompose": "^0.30.0",
     "redux": "^4.0.1",
     "redux-actions": "^2.6.4",
-    "redux-persist": "^5.10.0",
+    "redux-persist": "^6.0.0",
     "visibilityjs": "^2.0.2",
     "whatwg-fetch": "^3.0.0"
   },
