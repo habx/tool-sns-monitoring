@@ -17,7 +17,7 @@
     "lodash.isequalwith": "^4.4.0",
     "lodash.omit": "^4.5.0",
     "memoizee": "^0.4.14",
-    "notistack": "^0.4.2",
+    "notistack": "^0.9.7",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-redux": "^6.0.0",
